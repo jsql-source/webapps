@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	    <layout class="ch.qos.logback.classic.PatternLayout">
+		<Pattern>
+			%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+		</Pattern>
+	    </layout>
+	</appender>
+	
+    <!-- error -->
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <file>logs/error-today.log</file>
+        <!-- day -->  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <fileNamePattern>logs/error/error-%d{yyyy-MM-dd}.log.gz</fileNamePattern>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level - %msg%n</pattern>  
+        </encoder>
+        <!-- error filter -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>
+        </filter>  
+    </appender> 
+    
+        <!-- warn -->
+    <appender name="warnAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <file>logs/warn-today.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <fileNamePattern>logs/warn/warn-%d{yyyy-MM-dd}.log.gz</fileNamePattern>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>  
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>
+        </filter>  
+    </appender> 
+
+    <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <file>logs/info-today.log</file>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <fileNamePattern>logs/info/info-%d{yyyy-MM-dd}.log.gz</fileNamePattern>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>  
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>
+        </filter>  
+    </appender>
+
+	<logger name="org.springframework" level="debug" additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="errorAppender" />	
+	</logger>
+	
+	<logger name="com.homework" level="debug" additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="infoAppender" />
+		<appender-ref ref="warnAppender" />
+		<appender-ref ref="errorAppender" />
+	</logger>
+	 
+	<root level="error">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="errorAppender" />
+	</root>
+
+</configuration>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="deploy" default="dockerize" basedir=".">
+  <property name="app_host" value="192.168.100.45" />
+  <property name="app_folder" value="/tmp" />
+  <property name="username" value="root" />
+  <property name="password" value="manager" />
+ 
+  <target name="dockerize">
+    <first id="jars">
+      <fileset dir="target" includes="**/*.jar" />
+    </first>
+    <pathconvert pathsep="," property="jar.path" refid="jars" />
+    <basename file="${jar.path}" property="jar.filename" />
+    <echo>"Found application ${jar.path}"</echo>
+   	
+    <echo>"Copying application ${jar.path} to ${app_host}:${app_folder}/"</echo>
+  	<scp localfile="${jar.path}" todir="${username}:${password}@${app_host}:${app_folder}" trust="true" />
+    	
+  	<echo>"Copying files to ${app_host}:${app_folder}/"</echo>	
+    <scp localfile="target/Dockerfile" todir="${username}:${password}@${app_host}:${app_folder}" trust="true" />
+  	<scp localfile="target/docker-compose.yml" todir="${username}:${password}@${app_host}:${app_folder}" trust="true" />
+  	<scp localfile="target/hm_db.sqlite" todir="${username}:${password}@${app_host}:${app_folder}" trust="true" />
+  	
+    <echo>"docker-compose"</echo>
+    <sshexec host="${app_host}" username="${username}" password="${password}" trust="true" failonerror="true" usepty="true" 
+    	command="cd ${app_folder}; docker-compose -f docker-compose.yml up --build" />
+ 
+  </target>
+	
+	
+</project>
